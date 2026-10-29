@@ -1,0 +1,2550 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>정병아카이브</title>
+
+<style>
+
+@import url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css');
+
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
+    margin:0;
+    width:100%;
+    height:100%;
+    background:#000;
+    overflow:hidden;
+}
+
+
+/* ==================================================
+   전체 고정 화면
+================================================== */
+
+#stage{
+    position:absolute;
+
+    width:1672px;
+    height:941px;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%, -50%);
+
+    overflow:hidden;
+
+    background:#000;
+
+    font-family:"Galmuri11", sans-serif;
+}
+
+
+/* ==================================================
+   병원 메인
+================================================== */
+
+#hospitalScene{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:1672px;
+    height:941px;
+
+    background:#000;
+}
+
+
+/* 기본 병원 */
+
+#hospital{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:1672px;
+    height:941px;
+
+    z-index:1;
+
+    pointer-events:none;
+
+    image-rendering:pixelated;
+}
+
+
+/* 창문 불 꺼진 이미지 */
+
+.effect{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:1672px;
+    height:941px;
+
+    opacity:0;
+
+    z-index:2;
+
+    pointer-events:none;
+
+    image-rendering:pixelated;
+}
+
+
+/* 깜빡임 */
+
+.effect.flicker{
+    animation:flicker .9s steps(1) infinite;
+}
+
+
+@keyframes flicker{
+
+    0%{
+        opacity:0;
+    }
+
+    8%{
+        opacity:1;
+    }
+
+    14%{
+        opacity:0;
+    }
+
+    22%{
+        opacity:1;
+    }
+
+    27%{
+        opacity:0;
+    }
+
+    34%{
+        opacity:1;
+    }
+
+    48%{
+        opacity:1;
+    }
+
+    52%{
+        opacity:0;
+    }
+
+    72%{
+        opacity:0;
+    }
+
+    76%{
+        opacity:1;
+    }
+
+    82%{
+        opacity:0;
+    }
+
+    100%{
+        opacity:0;
+    }
+
+}
+
+
+/* ==================================================
+   병원 창문 클릭 영역
+================================================== */
+
+.window{
+    position:absolute;
+
+    padding:0;
+    margin:0;
+
+    border:0;
+
+    background:transparent;
+
+    cursor:pointer;
+
+    z-index:10;
+}
+
+
+/* 1번 */
+
+.window1{
+    left:270px;
+    top:390px;
+
+    width:180px;
+    height:110px;
+}
+
+
+/* 2번 */
+
+.window2{
+    left:728px;
+    top:340px;
+
+    width:210px;
+    height:115px;
+}
+
+
+/* 3번 */
+
+.window3{
+    left:1000px;
+    top:390px;
+
+    width:180px;
+    height:110px;
+}
+
+
+/* 4번 */
+
+.window4{
+    left:480px;
+    top:530px;
+
+    width:160px;
+    height:110px;
+}
+
+
+/* 5번 */
+
+.window5{
+    left:730px;
+    top:515px;
+
+    width:210px;
+    height:110px;
+}
+
+
+/* 6번 */
+
+.window6{
+    left:1200px;
+    top:390px;
+
+    width:190px;
+    height:110px;
+}
+
+
+/* ==================================================
+   사회불안 안내 문구
+================================================== */
+
+#socialHint{
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%, -50%);
+
+    color:#ff2a2a;
+
+    background:rgba(0,0,0,0.78);
+
+    padding:12px 18px;
+
+    border:3px solid #111;
+
+    font-family:"Galmuri11", sans-serif;
+    font-size:22px;
+
+    text-align:center;
+
+    display:none;
+
+    z-index:30;
+
+    white-space:nowrap;
+}
+
+
+#socialHint.show{
+    display:block;
+}
+
+
+/* ==================================================
+   방 공통
+================================================== */
+
+.roomScene{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:1672px;
+    height:941px;
+
+    overflow:hidden;
+
+    background:#000;
+
+    display:none;
+
+    z-index:100;
+}
+
+
+/* ==================================================
+   BACK
+================================================== */
+
+.roomBack{
+    position:absolute;
+
+    left:11%;
+    top:12%;
+
+    padding:10px 16px;
+
+    border:1px solid #eee9df;
+
+    background:#000;
+
+    color:#eee9df;
+
+    font-family:"Galmuri11", sans-serif;
+    font-size:16px;
+
+    cursor:pointer;
+
+    z-index:10000;
+}
+
+
+.roomBack:hover{
+    background:#eee9df;
+    color:#000;
+}
+
+.roomBack:hover{
+    background:#25271e;
+    color:#e2e4b9;
+}
+
+
+/* ==================================================
+   사회불안
+================================================== */
+
+#socialScene{
+    cursor:none;
+}
+
+
+/* 눈 */
+
+.eye{
+    position:absolute;
+
+    pointer-events:none;
+
+    transform-origin:center center;
+
+    z-index:10;
+}
+
+
+/* 흰자 */
+
+.eye-base{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:100%;
+    height:100%;
+
+    object-fit:contain;
+
+    image-rendering:pixelated;
+}
+
+
+/* 동공 영역 */
+
+.pupil-area{
+    position:absolute;
+
+    left:19%;
+    top:15%;
+
+    width:62%;
+    height:68%;
+}
+
+
+/* 동공 */
+
+.pupil{
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    width:42%;
+
+    transform:translate(-50%, -50%);
+
+    image-rendering:pixelated;
+}
+
+
+/* 사회불안 커서 */
+
+#socialCursor{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:72px;
+
+    pointer-events:none;
+
+    z-index:9999;
+
+    image-rendering:pixelated;
+
+    filter:brightness(0) invert(1);
+}
+
+
+/* ==================================================
+   설명창 공통
+================================================== */
+
+.infoOverlay{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,.65);
+
+    z-index:8000;
+
+    display:none;
+}
+
+
+.infoOverlay.show{
+    display:block;
+}
+
+
+.infoBox{
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%, -50%);
+
+    width:620px;
+
+    padding:34px 38px;
+
+    background:#e2e4b9;
+
+    color:#25271e;
+
+    border:7px solid #303229;
+
+    z-index:9000;
+
+    display:none;
+}
+
+
+.infoBox.show{
+    display:block;
+}
+
+
+.infoTitle{
+    font-size:27px;
+
+    margin-bottom:22px;
+}
+
+
+.infoText{
+    font-size:19px;
+
+    line-height:1.8;
+}
+
+
+.infoButton{
+    margin-top:28px;
+
+    padding:8px 12px;
+
+    border:0;
+
+    background:transparent;
+
+    color:#25271e;
+
+    font-family:"Galmuri11", sans-serif;
+
+    font-size:19px;
+
+    cursor:pointer;
+}
+
+
+.infoButton::before{
+    content:"▶ ";
+}
+
+
+.infoButton:hover{
+    background:#25271e;
+
+    color:#e2e4b9;
+}
+
+
+/* ==================================================
+   공황장애
+================================================== */
+
+.emptyRoomTitle{
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%, -50%);
+
+    color:#eee9df;
+
+    font-family:"Galmuri11", sans-serif;
+    font-size:28px;
+}
+
+/* ==================================================
+   공황장애 - 물에 잠기는 지하철
+================================================== */
+
+#panicScene{
+    background:#000;
+}
+
+
+/* 배경과 물이 같이 흔들리는 영역 */
+
+#panicVisual{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:1672px;
+    height:941px;
+
+    overflow:hidden;
+
+    transform-origin:center center;
+}
+
+
+/* 지하철 배경 */
+
+#panicBg{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:1672px;
+    height:941px;
+
+    object-fit:cover;
+
+    image-rendering:pixelated;
+
+    pointer-events:none;
+
+    z-index:1;
+}
+
+
+/* 물 */
+
+#panicWater{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:1672px;
+    height:941px;
+
+    object-fit:fill;
+
+    image-rendering:pixelated;
+
+    pointer-events:none;
+
+    opacity:.72;
+
+    z-index:500;
+
+    /*
+    처음에는 아래로 내려가 있어서
+    물이 거의 안 보임
+    */
+
+    transform:
+        translateY(64%);
+}
+
+
+/* 수위가 올라갈수록 화면 주변이 어두워짐 */
+
+#panicDark{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:100%;
+    height:100%;
+
+    z-index:20;
+
+    pointer-events:none;
+
+    opacity:0;
+
+    background:
+        radial-gradient(
+            circle at center,
+            transparent 25%,
+            rgba(0,0,0,.25) 58%,
+            rgba(0,0,0,.92) 100%
+        );
+}
+
+
+/* 지하철 문 클릭 영역 */
+
+#panicEscape{
+    position:absolute;
+
+    /*
+    네 배경 중앙 문 위치
+    */
+
+    left:36%;
+    top:23%;
+
+    width:28%;
+    height:52%;
+
+    border:0;
+
+    background:transparent;
+
+    cursor:pointer;
+
+    z-index:100;
+}
+
+
+/* 클릭할 때 순간적으로 테두리 */
+
+#panicEscape.hit{
+    outline:
+        3px solid
+        rgba(238,233,223,.35);
+}
+
+/* ==================================================
+   공황장애 최종 수정
+================================================== */
+
+/* 화면 전체가 클릭 영역 */
+#panicEscape{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:100%;
+    height:100%;
+
+    border:0;
+    background:transparent;
+
+    cursor:pointer;
+
+    z-index:100;
+}
+
+
+/* 클릭 테두리 없애기 */
+#panicEscape.hit{
+    outline:none;
+}
+
+
+/* 암전 없애기 */
+#panicDark{
+    display:none;
+}
+
+
+/* 흔들림 없음 */
+#panicVisual{
+    transform:none;
+}
+
+
+/* 물 */
+#panicWater{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:1672px;
+    height:941px;
+
+    object-fit:fill;
+
+    image-rendering:pixelated;
+
+    pointer-events:none;
+
+    opacity:.78;
+}
+
+#panicEscape{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    border:0;
+    background:transparent;
+    cursor:pointer;
+    z-index:100;
+}
+
+#panicEscape.hit{
+    outline:none;
+}
+
+#panicDark{
+    display:none;
+}
+
+#panicVisual{
+    transform:none;
+}
+
+#panicDoorEffect{
+    position:absolute;
+
+    left:35.7%;
+    top:22%;
+
+    width:28.7%;
+    height:53%;
+
+    z-index:50;
+
+    overflow:hidden;
+
+    pointer-events:none;
+}
+
+
+#panicDoorLeft,
+#panicDoorRight{
+    position:absolute;
+
+    top:0;
+
+    width:50%;
+    height:100%;
+
+    background-image:url("panic_bg.png");
+
+    background-size:1672px 941px;
+
+    background-repeat:no-repeat;
+
+    image-rendering:pixelated;
+
+    transition:transform .12s ease-out;
+}
+
+
+#panicDoorLeft{
+    left:0;
+
+    background-position:
+    -597px -207px;
+}
+
+
+#panicDoorRight{
+    right:0;
+
+    background-position:
+    -837px -207px;
+}
+</style>
+
+</head>
+
+
+<body>
+
+
+<main id="stage">
+
+
+<!-- ==================================================
+     기존 병원
+================================================== -->
+
+<section id="hospitalScene">
+
+
+    <img
+        id="hospital"
+        src="hospital.png"
+        alt="병원"
+    >
+
+
+    <img
+        id="effect1"
+        class="effect"
+        src="hospital_1.png"
+        alt=""
+    >
+
+
+    <img
+        id="effect2"
+        class="effect"
+        src="hospital_2.png"
+        alt=""
+    >
+
+
+    <img
+        id="effect3"
+        class="effect"
+        src="hospital_3.png"
+        alt=""
+    >
+
+
+    <img
+        id="effect4"
+        class="effect"
+        src="hospital_4.png"
+        alt=""
+    >
+
+
+    <img
+        id="effect5"
+        class="effect"
+        src="hospital_5.png"
+        alt=""
+    >
+
+
+    <img
+        id="effect6"
+        class="effect"
+        src="hospital_6.png"
+        alt=""
+    >
+
+
+
+    <!-- 1번 공황장애 -->
+<button
+    class="window window1"
+    data-effect="effect1"
+    data-room="panic"
+    data-name="공황장애"
+></button>
+
+
+<!-- 2번 사회불안장애 -->
+<button
+    class="window window2"
+    data-effect="effect2"
+    data-room="social"
+    data-name="사회불안"
+></button>
+
+
+<!-- 3번 우울장애 -->
+<button
+    class="window window3"
+    data-effect="effect3"
+    data-room="depression"
+    data-name="우울장애"
+></button>
+
+
+<!-- 4번 강박장애 -->
+<button
+    class="window window4"
+    data-effect="effect4"
+    data-room="ocd"
+    data-name="강박장애"
+></button>
+
+
+<!-- 5번 불면증 -->
+<button
+    class="window window5"
+    data-effect="effect5"
+    data-room="insomnia"
+    data-name="불면증"
+></button>
+
+
+<!-- 6번 조현병 -->
+<button
+    class="window window6"
+    data-effect="effect6"
+    data-room="schizophrenia"
+    data-name="조현병"
+></button>
+
+
+<div id="socialHint"></div>
+
+
+
+
+
+
+</section>
+
+
+
+<!-- ==================================================
+     사회불안 방
+================================================== -->
+
+<section
+    id="socialScene"
+    class="roomScene"
+>
+
+
+    <button
+        id="socialBack"
+        class="roomBack"
+        type="button"
+    >
+        ← 돌아가기
+    </button>
+
+
+    <img
+        id="socialCursor"
+        src="cursor.png"
+        alt=""
+    >
+
+
+    <div
+        id="socialInfoOverlay"
+        class="infoOverlay"
+    ></div>
+
+
+    <div
+        id="socialInfoBox"
+        class="infoBox"
+    >
+
+
+        <div class="infoTitle">
+            사회불안장애
+        </div>
+
+
+        <div class="infoText">
+
+            다른 사람의 시선이나 평가를 강하게 두려워하여,<br>
+            일상적인 사회적 상황에서도 큰 불안을 느끼는 상태
+
+        </div>
+
+
+        <button
+            id="socialInfoButton"
+            class="infoButton"
+            type="button"
+        >
+            돌아가기
+        </button>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ==================================================
+     공황장애 방
+================================================== -->
+
+<section
+    id="panicScene"
+    class="roomScene"
+>
+
+    <!-- 배경 + 물 + 흔들림 전체 -->
+    <div id="panicVisual">
+
+        <img
+            id="panicBg"
+            src="panic_bg.png"
+            alt=""
+        >
+
+        <img
+            id="panicWater"
+            src="panic_water.png"
+            alt=""
+        >
+
+    </div>
+
+
+    <!-- 화면 가장자리 암전 -->
+    <div id="panicDark"></div>
+
+
+<div id="panicDoorEffect">
+
+    <div id="panicDoorLeft"></div>
+    <div id="panicDoorRight"></div>
+
+</div>
+
+    <!-- 문을 계속 클릭하는 영역 -->
+    <button
+        id="panicEscape"
+        type="button"
+        aria-label="문 열기 시도"
+    ></button>
+
+
+   
+
+    <!-- BACK -->
+    <button
+        id="panicBack"
+        class="roomBack"
+        type="button"
+    >
+        ← 돌아가기
+    </button>
+
+
+    <!-- 설명창 -->
+    <div
+        id="panicInfoOverlay"
+        class="infoOverlay"
+    ></div>
+
+
+    <div
+        id="panicInfoBox"
+        class="infoBox"
+    >
+
+        <div class="infoTitle">
+            공황장애
+        </div>
+
+        <div class="infoText">
+
+            특별한 이유나 위험 상황이 없음에도 불구하고,<br>갑작스럽고 극심한 공포와 불안, 공황발작이 반복적으로 발생하는 불안장애
+
+        </div>
+
+        <button
+            id="panicInfoButton"
+            class="infoButton"
+            type="button"
+        >
+            돌아가기
+        </button>
+
+    </div>
+
+</section>
+<!-- ==================================================
+     우울장애
+================================================== -->
+
+<section
+    id="depressionScene"
+    class="roomScene"
+>
+
+    <button
+        class="roomBack"
+        data-back="hospital"
+        type="button"
+    >
+        ← BACK
+    </button>
+
+    <div class="emptyRoomTitle">
+        우울장애
+    </div>
+
+</section>
+
+
+
+<!-- ==================================================
+     강박장애
+================================================== -->
+
+<section
+    id="ocdScene"
+    class="roomScene"
+>
+
+    <button
+        class="roomBack"
+        data-back="hospital"
+        type="button"
+    >
+        ← BACK
+    </button>
+
+    <div class="emptyRoomTitle">
+        강박장애
+    </div>
+
+</section>
+
+
+
+<!-- ==================================================
+     불면증
+================================================== -->
+
+<section
+    id="insomniaScene"
+    class="roomScene"
+>
+
+    <button
+        class="roomBack"
+        data-back="hospital"
+        type="button"
+    >
+        ← BACK
+    </button>
+
+    <div class="emptyRoomTitle">
+        불면증
+    </div>
+
+</section>
+
+
+
+<!-- ==================================================
+     조현병
+================================================== -->
+
+<section
+    id="schizophreniaScene"
+    class="roomScene"
+>
+
+    <button
+        class="roomBack"
+        data-back="hospital"
+        type="button"
+    >
+        ← BACK
+    </button>
+
+    <div class="emptyRoomTitle">
+        조현병
+    </div>
+
+</section>
+</main>
+
+
+
+<script>
+
+
+/* ==================================================
+   기존 병원 요소
+================================================== */
+
+const windows =
+document.querySelectorAll(".window");
+
+
+const effects =
+document.querySelectorAll(".effect");
+
+
+const socialHint =
+document.getElementById("socialHint");
+
+
+const hospitalScene =
+document.getElementById("hospitalScene");
+
+
+const socialScene =
+document.getElementById("socialScene");
+
+
+const panicScene =
+document.getElementById("panicScene");
+
+const depressionScene =
+document.getElementById("depressionScene");
+
+
+const ocdScene =
+document.getElementById("ocdScene");
+
+
+const insomniaScene =
+document.getElementById("insomniaScene");
+
+
+const schizophreniaScene =
+document.getElementById("schizophreniaScene");
+
+
+/* ==================================================
+   창문 효과 초기화
+================================================== */
+
+function stopEffects(){
+
+    effects.forEach(function(effect){
+
+        effect.classList.remove(
+            "flicker"
+        );
+
+        effect.style.opacity =
+        "0";
+
+    });
+
+}
+
+
+
+/* ==================================================
+   병원 화면으로 돌아오기
+================================================== */
+
+function hideAllRooms(){
+
+    socialScene.style.display =
+    "none";
+
+    panicScene.style.display =
+    "none";
+
+    depressionScene.style.display =
+    "none";
+
+    ocdScene.style.display =
+    "none";
+
+    insomniaScene.style.display =
+    "none";
+
+    schizophreniaScene.style.display =
+    "none";
+
+}
+
+function showHospital(){
+
+    stopPanic();
+
+    hideAllRooms();
+
+    hospitalScene.style.display =
+    "block";
+
+    socialHint.classList.remove(
+        "show"
+    );
+
+    stopEffects();
+
+}
+
+
+
+/* ==================================================
+   병원 창문
+================================================== */
+
+windows.forEach(function(windowButton){
+
+    const effect =
+    document.getElementById(
+        windowButton.dataset.effect
+    );
+
+
+    /* 마우스 올림 */
+
+   
+windowButton.addEventListener(
+    "mouseenter",
+
+    function(){
+
+        stopEffects();
+
+
+        if(effect){
+
+            effect.classList.add(
+                "flicker"
+            );
+
+        }
+
+
+        socialHint.textContent =
+        windowButton.dataset.name +
+        "의 방에 들어가시겠습니까?";
+
+
+        socialHint.classList.add(
+            "show"
+        );
+
+    }
+);
+
+    /* 마우스 나감 */
+
+    windowButton.addEventListener(
+        "mouseleave",
+        function(){
+
+            if(effect){
+
+                effect.classList.remove("flicker");
+                effect.style.opacity = "0";
+
+            }
+
+            socialHint.classList.remove("show");
+
+        }
+    );
+
+
+    /* 창문 클릭 */
+
+    windowButton.addEventListener(
+        "click",
+        function(){
+
+            stopEffects();
+
+            const room =
+            windowButton.dataset.room;
+
+
+            /* 공황장애 */
+
+            if(room === "panic"){
+
+                openPanic();
+                return;
+
+            }
+
+
+            /* 사회불안장애 */
+
+            if(room === "social"){
+
+                openSocial();
+                return;
+
+            }
+
+
+            /* 우울장애 */
+
+            if(room === "depression"){
+
+                hideAllRooms();
+
+                hospitalScene.style.display =
+                "none";
+
+                depressionScene.style.display =
+                "block";
+
+                return;
+
+            }
+
+
+            /* 강박장애 */
+
+            if(room === "ocd"){
+
+                hideAllRooms();
+
+                hospitalScene.style.display =
+                "none";
+
+                ocdScene.style.display =
+                "block";
+
+                return;
+
+            }
+
+
+            /* 불면증 */
+
+            if(room === "insomnia"){
+
+                hideAllRooms();
+
+                hospitalScene.style.display =
+                "none";
+
+                insomniaScene.style.display =
+                "block";
+
+                return;
+
+            }
+
+
+            /* 조현병 */
+
+            if(room === "schizophrenia"){
+
+                hideAllRooms();
+
+                hospitalScene.style.display =
+                "none";
+
+                schizophreniaScene.style.display =
+                "block";
+
+                return;
+
+            }
+
+        }
+    );
+
+});
+
+/* ==================================================
+   사회불안
+================================================== */
+
+const socialCursor =
+document.getElementById(
+    "socialCursor"
+);
+
+
+const socialBack =
+document.getElementById(
+    "socialBack"
+);
+
+
+const socialInfoOverlay =
+document.getElementById(
+    "socialInfoOverlay"
+);
+
+
+const socialInfoBox =
+document.getElementById(
+    "socialInfoBox"
+);
+
+
+const socialInfoButton =
+document.getElementById(
+    "socialInfoButton"
+);
+
+
+
+let eyes = [];
+
+
+let lastX =
+null;
+
+
+let lastY =
+null;
+
+
+let movement =
+0;
+
+
+let socialInfoShown =
+false;
+
+
+
+const EYE_SCALE =
+1.4;
+
+
+const SPAWN_DISTANCE =
+110;
+
+
+const MAX_EYES =
+100;
+
+
+const SOCIAL_INFO_EYES =
+90;
+
+
+
+/* ==================================================
+   사회불안 열기
+================================================== */
+function openSocial(){
+
+    /* 다른 방 정지 */
+    stopPanic();
+
+
+    /* 병원 숨기기 */
+    hospitalScene.style.display =
+    "none";
+
+
+    /* 다른 방 숨기기 */
+    panicScene.style.display =
+    "none";
+
+    depressionScene.style.display =
+    "none";
+
+    ocdScene.style.display =
+    "none";
+
+    insomniaScene.style.display =
+    "none";
+
+    schizophreniaScene.style.display =
+    "none";
+
+
+    /* 사회불안 화면을 먼저 확실히 보여줌 */
+    socialScene.style.display =
+    "block";
+
+    socialScene.style.visibility =
+    "visible";
+
+    socialScene.style.opacity =
+    "1";
+
+
+    socialHint.classList.remove(
+        "show"
+    );
+
+
+    /*
+    화면이 실제로 열린 다음 프레임에
+    눈을 생성
+    */
+
+    requestAnimationFrame(
+        function(){
+
+            resetSocialScene();
+
+        }
+    );
+
+}
+
+
+
+/* ==================================================
+   사회불안 초기화
+================================================== */
+
+function resetSocialScene(){
+
+
+    eyes.forEach(function(data){
+
+        data.element.remove();
+
+    });
+
+
+    eyes = [];
+
+
+    lastX =
+    null;
+
+
+    lastY =
+    null;
+
+
+    movement =
+    0;
+
+
+    socialInfoShown =
+    false;
+
+
+    socialInfoOverlay
+    .classList
+    .remove(
+        "show"
+    );
+
+
+    socialInfoBox
+    .classList
+    .remove(
+        "show"
+    );
+
+
+
+    createEye(
+        720,
+        25,
+        240,
+        0
+    );
+
+
+    createEye(
+        -40,
+        20,
+        270,
+        10
+    );
+
+
+    createEye(
+        1470,
+        420,
+        220,
+        -8
+    );
+
+
+    createEye(
+        -40,
+        680,
+        300,
+        -10
+    );
+
+
+    createEye(
+        1120,
+        660,
+        170,
+        14
+    );
+
+}
+
+
+
+/* ==================================================
+   눈 생성
+================================================== */
+
+function createEye(
+    x,
+    y,
+    size,
+    rotation
+){
+
+
+    if(
+        eyes.length >=
+        MAX_EYES
+    ){
+        return;
+    }
+
+
+    const eye =
+    document.createElement(
+        "div"
+    );
+
+
+    eye.className =
+    "eye";
+
+
+    eye.style.left =
+    x + "px";
+
+
+    eye.style.top =
+    y + "px";
+
+
+    eye.style.width =
+    size *
+    EYE_SCALE
+    + "px";
+
+
+    eye.style.height =
+    size *
+    EYE_SCALE *
+    .58
+    + "px";
+
+
+    eye.style.transform =
+    `rotate(${rotation}deg)`;
+
+
+
+    const base =
+    document.createElement(
+        "img"
+    );
+
+
+    base.src =
+    "eye.png";
+
+
+    base.className =
+    "eye-base";
+
+
+
+    const area =
+    document.createElement(
+        "div"
+    );
+
+
+    area.className =
+    "pupil-area";
+
+
+
+    const pupil =
+    document.createElement(
+        "img"
+    );
+
+
+    pupil.src =
+    "pupil.png";
+
+
+    pupil.className =
+    "pupil";
+
+
+
+    area.appendChild(
+        pupil
+    );
+
+
+    eye.appendChild(
+        base
+    );
+
+
+    eye.appendChild(
+        area
+    );
+
+
+    socialScene.appendChild(
+        eye
+    );
+
+
+    eyes.push({
+
+        element:eye,
+
+        pupil:pupil,
+
+        rotation:rotation
+
+    });
+
+
+
+    /* 눈 많이 쌓이면 설명 */
+
+    if(
+        eyes.length >=
+        SOCIAL_INFO_EYES
+        &&
+        !socialInfoShown
+    ){
+
+        socialInfoShown =
+        true;
+
+
+        setTimeout(
+            function(){
+
+
+                socialInfoOverlay
+                .classList
+                .add(
+                    "show"
+                );
+
+
+                socialInfoBox
+                .classList
+                .add(
+                    "show"
+                );
+
+
+            },
+            700
+        );
+
+    }
+
+}
+
+
+
+/* ==================================================
+   랜덤 눈 생성
+================================================== */
+
+function spawnEye(){
+
+
+    if(
+        eyes.length >=
+        MAX_EYES
+    ){
+        return;
+    }
+
+
+    const sizes = [
+
+        70,
+        90,
+        120,
+        150,
+        190,
+        240
+
+    ];
+
+
+    const size =
+    sizes[
+
+        Math.floor(
+            Math.random()
+            *
+            sizes.length
+        )
+
+    ];
+
+
+    let x =
+    Math.random()
+    *
+    (
+        1672 -
+        size *
+        EYE_SCALE
+    );
+
+
+    let y =
+    Math.random()
+    *
+    (
+        941 -
+        size *
+        EYE_SCALE *
+        .6
+    );
+
+
+    if(
+        x < 500
+        &&
+        y < 120
+    ){
+
+        y +=
+        150;
+
+    }
+
+
+    const rotations = [
+
+        -15,
+        -8,
+        0,
+        8,
+        15
+
+    ];
+
+
+    const rotation =
+    rotations[
+
+        Math.floor(
+            Math.random()
+            *
+            rotations.length
+        )
+
+    ];
+
+
+    createEye(
+        x,
+        y,
+        size,
+        rotation
+    );
+
+}
+
+
+
+/* ==================================================
+   눈동자가 커서를 따라감
+================================================== */
+
+function updateEyes(
+    cursorX,
+    cursorY
+){
+
+
+    eyes.forEach(function(data){
+
+
+        const rect =
+        data.element
+        .getBoundingClientRect();
+
+
+        const centerX =
+        rect.left +
+        rect.width / 2;
+
+
+        const centerY =
+        rect.top +
+        rect.height / 2;
+
+
+        let dx =
+        cursorX -
+        centerX;
+
+
+        let dy =
+        cursorY -
+        centerY;
+
+
+        const radians =
+        -data.rotation *
+        Math.PI /
+        180;
+
+
+        const localX =
+        dx * Math.cos(radians)
+        -
+        dy * Math.sin(radians);
+
+
+        const localY =
+        dx * Math.sin(radians)
+        +
+        dy * Math.cos(radians);
+
+
+        const angle =
+        Math.atan2(
+            localY,
+            localX
+        );
+
+
+        const maxX =
+        rect.width *
+        .13;
+
+
+        const maxY =
+        rect.height *
+        .14;
+
+
+        const pupilX =
+        Math.cos(angle)
+        *
+        maxX;
+
+
+        const pupilY =
+        Math.sin(angle)
+        *
+        maxY;
+
+
+        data.pupil.style.transform =
+
+        `
+        translate(
+            calc(-50% + ${pupilX}px),
+            calc(-50% + ${pupilY}px)
+        )
+        `;
+
+
+    });
+
+}
+
+
+
+/* ==================================================
+   사회불안 마우스
+================================================== */
+
+socialScene.addEventListener(
+    "mousemove",
+
+    function(event){
+
+
+        if(
+            socialScene.style.display
+            !==
+            "block"
+        ){
+            return;
+        }
+
+
+        const rect =
+        socialScene
+        .getBoundingClientRect();
+
+
+        const mouseX =
+        event.clientX -
+        rect.left;
+
+
+        const mouseY =
+        event.clientY -
+        rect.top;
+
+
+
+        socialCursor.style.left =
+        mouseX + "px";
+
+
+        socialCursor.style.top =
+        mouseY + "px";
+
+
+        updateEyes(
+            event.clientX,
+            event.clientY
+        );
+
+
+
+        if(
+            lastX !==
+            null
+        ){
+
+
+            const dx =
+            mouseX -
+            lastX;
+
+
+            const dy =
+            mouseY -
+            lastY;
+
+
+            const distance =
+            Math.sqrt(
+                dx * dx
+                +
+                dy * dy
+            );
+
+
+            movement +=
+            distance;
+
+
+            if(
+                movement >=
+                SPAWN_DISTANCE
+            ){
+
+                spawnEye();
+
+
+                movement =
+                0;
+
+            }
+
+        }
+
+
+        lastX =
+        mouseX;
+
+
+        lastY =
+        mouseY;
+
+
+    }
+);
+
+
+/* ==================================================
+   공황장애
+================================================== */
+const panicWater =
+document.getElementById("panicWater");
+
+const panicEscape =
+document.getElementById("panicEscape");
+
+const panicDoorLeft =
+document.getElementById(
+    "panicDoorLeft"
+);
+
+
+const panicDoorRight =
+document.getElementById(
+    "panicDoorRight"
+);
+
+const panicBack =
+document.getElementById("panicBack");
+
+const panicInfoOverlay =
+document.getElementById("panicInfoOverlay");
+
+const panicInfoBox =
+document.getElementById("panicInfoBox");
+
+const panicInfoButton =
+document.getElementById("panicInfoButton");
+
+
+let panicRunning = false;
+let panicFrame = null;
+let panicLastTime = 0;
+
+let panicWaterLevel = 0;
+let panicClicks = 0;
+
+
+function drawPanicWater(){
+
+    const waterY =
+    52 -
+    panicWaterLevel * 0.8;
+
+    panicWater.style.transform =
+    `translateY(${waterY}%)`;
+
+    panicWater.style.opacity =
+    Math.min(
+        0.96,
+        0.76 +
+        panicWaterLevel * 0.002
+    );
+
+}
+
+
+function openPanic(){
+
+    hideAllRooms();
+
+    hospitalScene.style.display =
+    "none";
+
+    panicScene.style.display =
+    "block";
+
+    resetPanic();
+
+    panicRunning = true;
+
+    panicLastTime =
+    performance.now();
+
+    panicFrame =
+    requestAnimationFrame(
+        panicLoop
+    );
+
+}
+
+
+function resetPanic(){
+
+    panicDoorLeft.style.transform =
+"translateX(0px)";
+
+
+panicDoorRight.style.transform =
+"translateX(0px)";
+
+    stopPanic();
+
+    panicWaterLevel = 0;
+    panicClicks = 0;
+
+    panicInfoOverlay
+    .classList
+    .remove("show");
+
+    panicInfoBox
+    .classList
+    .remove("show");
+
+    drawPanicWater();
+
+}
+
+
+function panicLoop(time){
+
+    if(!panicRunning){
+        return;
+    }
+
+
+    const delta =
+    Math.min(
+        (time - panicLastTime) / 1000,
+        0.05
+    );
+
+
+    panicLastTime = time;
+
+
+    const riseSpeed =
+    14 +
+    panicWaterLevel * 0.04;
+
+
+    panicWaterLevel +=
+    riseSpeed * delta;
+
+
+    panicWaterLevel =
+    Math.min(
+        100,
+        panicWaterLevel
+    );
+
+
+    drawPanicWater();
+
+
+    if(
+        panicWaterLevel >= 100
+    ){
+
+        finishPanic();
+        return;
+
+    }
+
+
+    panicFrame =
+    requestAnimationFrame(
+        panicLoop
+    );
+
+}
+
+
+panicEscape.addEventListener(
+    "pointerdown",
+
+    function(){
+
+        if(!panicRunning){
+            return;
+        }
+
+
+        panicClicks++;
+
+const doorOpen =
+Math.min(
+    24,
+    3 +
+    panicClicks * 0.7
+);
+
+
+panicDoorLeft.style.transform =
+`translateX(-${doorOpen}px)`;
+
+
+panicDoorRight.style.transform =
+`translateX(${doorOpen}px)`;
+
+clearTimeout(
+    panicEscape.doorTimer
+);
+
+
+panicEscape.doorTimer =
+setTimeout(
+    function(){
+
+        panicDoorLeft.style.transform =
+        "translateX(0px)";
+
+
+        panicDoorRight.style.transform =
+        "translateX(0px)";
+
+    },
+
+    180
+);
+
+const relief =
+Math.max(
+    0.4,
+    2.2 -
+    panicClicks * 0.05
+);
+
+
+        panicWaterLevel -=
+        relief;
+
+
+        panicWaterLevel =
+        Math.max(
+            0,
+            panicWaterLevel
+        );
+
+
+        drawPanicWater();
+
+    }
+);
+
+
+function finishPanic(){
+
+    stopPanic();
+
+    panicWaterLevel = 100;
+
+    drawPanicWater();
+
+
+    setTimeout(
+        function(){
+
+            panicInfoOverlay
+            .classList
+            .add("show");
+
+            panicInfoBox
+            .classList
+            .add("show");
+
+        },
+        600
+    );
+
+}
+
+
+function stopPanic(){
+
+    panicRunning = false;
+
+
+    if(panicFrame){
+
+        cancelAnimationFrame(
+            panicFrame
+        );
+
+        panicFrame = null;
+
+    }
+
+}
+
+
+panicBack.addEventListener(
+    "click",
+    showHospital
+);
+
+
+panicInfoButton.addEventListener(
+    "click",
+    showHospital
+);
+ 
+socialBack.addEventListener(
+    "click",
+    showHospital
+);
+
+
+socialInfoButton.addEventListener(
+    "click",
+    showHospital
+);
+
+
+
+
+
+document
+.querySelectorAll(
+    '[data-back="hospital"]'
+)
+.forEach(
+    function(button){
+
+        button.addEventListener(
+            "click",
+            showHospital
+        );
+
+    }
+);
+</script>
+
+
+</body>
+
+</html>

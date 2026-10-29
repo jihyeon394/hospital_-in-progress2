@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>정병아카이브</title>
+
+<style>
+
+@import url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css');
+
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
+    margin:0;
+    width:100%;
+    height:100%;
+
+    overflow:hidden;
+    background:#111;
+}
+
+
+/* ==================================================
+   전체 게임 화면
+================================================== */
+
+#screen{
+    position:absolute;
+
+    width:1672px;
+    height:941px;
+
+    left:0;
+    top:0;
+
+    overflow:hidden;
+
+    transform-origin:0 0;
+
+    background:#111;
+
+    font-family:"Galmuri11", sans-serif;
+}
+
+
+/* ==================================================
+   맵 / 카메라
+================================================== */
+
+#world{
+    position:absolute;
+
+    width:1672px;
+    height:941px;
+
+    left:0;
+    top:0;
+
+    transform-origin:0 0;
+
+    transition:
+        transform .65s
+        cubic-bezier(.4,0,.2,1);
+}
+
+
+#map{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:1672px;
+    height:941px;
+
+    object-fit:cover;
+
+    image-rendering:pixelated;
+
+    pointer-events:none;
+
+    user-select:none;
+
+    z-index:1;
+}
+
+
+/* ==================================================
+   플레이어
+================================================== */
+
+#player{
+    position:absolute;
+
+    left:835px;
+    top:855px;
+
+    width:68px;
+
+    transform:translate(-50%,-100%);
+
+    image-rendering:pixelated;
+
+    pointer-events:none;
+
+    z-index:30;
+}
+
+
+/* ==================================================
+   NPC
+================================================== */
+
+.npc{
+    position:absolute;
+
+    width:78px;
+
+    transform:translate(-50%,-100%);
+
+    padding:0;
+    margin:0;
+
+    border:0;
+    background:transparent;
+
+    pointer-events:none;
+
+    z-index:20;
+}
+
+
+.npc img{
+    display:block;
+
+    width:100%;
+    height:auto;
+
+    image-rendering:pixelated;
+
+    pointer-events:none;
+}
+
+
+.npc.active{
+    pointer-events:auto;
+    cursor:pointer;
+}
+
+
+.npc.done{
+    opacity:.55;
+}
+
+
+/* ==================================================
+   NPC 상태 표시
+================================================== */
+
+.npcStatus{
+    position:absolute;
+
+    left:50%;
+    top:-42px;
+
+    transform:translateX(-50%);
+
+    min-width:44px;
+
+    padding:4px 8px;
+
+    border:3px solid #2b2b25;
+
+    background:#eee6cd;
+
+    color:#292922;
+
+    font-size:16px;
+
+    text-align:center;
+
+    white-space:nowrap;
+
+    display:none;
+}
+
+
+.npc.done .npcStatus{
+    display:block;
+
+    background:#344238;
+    color:#eee6cd;
+}
+
+
+/* ==================================================
+   NPC 실제 위치
+   시작점에서 가까운 순서
+================================================== */
+
+#npc1{
+    left:710px;
+    top:740px;
+}
+
+
+#npc2{
+    left:1030px;
+    top:570px;
+}
+
+
+#npc3{
+    left:900px;
+    top:370px;
+}
+
+
+/* ==================================================
+   병원 클릭 영역
+
+   village 이미지 속 병원 위치 위에
+   투명 버튼을 얹는 방식
+================================================== */
+
+#hospitalTarget{
+    position:absolute;
+
+    left:836px;
+    top:190px;
+
+    width:300px;
+    height:230px;
+
+    transform:translate(-50%,-50%);
+
+    padding:0;
+
+    border:0;
+    background:transparent;
+
+    pointer-events:none;
+
+    z-index:15;
+}
+
+
+#hospitalTarget.unlocked{
+    pointer-events:auto;
+    cursor:pointer;
+}
+
+
+/* 병원 ! */
+
+#hospitalMark{
+    display:none !important;
+}
+
+
+#hospitalTarget.unlocked #hospitalMark{
+    display:flex;
+}
+
+
+@keyframes hospitalBlink{
+
+    0%{
+        opacity:1;
+    }
+
+    50%{
+        opacity:0;
+    }
+
+    65%{
+        opacity:1;
+    }
+
+    100%{
+        opacity:1;
+    }
+
+}
+
+
+/* ==================================================
+   상단 안내
+================================================== */
+
+#guide{
+    position:absolute;
+
+    left:50%;
+    bottom:70px;
+
+    transform:translateX(-50%);
+
+    padding:10px 16px;
+
+    background:rgba(16,16,14,.80);
+
+    color:#eee6cd;
+
+    font-size:24px;
+
+    z-index:100;
+
+    pointer-events:none;
+}
+
+
+/* ==================================================
+   암전
+================================================== */
+
+#darkOverlay{
+    position:absolute;
+
+    inset:0;
+
+    background:#000;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:
+        opacity .45s steps(4);
+
+    z-index:150;
+}
+
+
+/* ==================================================
+   대화창
+================================================== */
+
+#dialogue{
+    position:absolute;
+
+    left:35px;
+    right:35px;
+    bottom:28px;
+
+    min-height:225px;
+
+    padding:30px 36px;
+
+    border:7px solid #303229;
+
+    background:#e2e4b9;
+
+    color:#25271e;
+
+    display:none;
+
+    z-index:300;
+}
+
+
+#dialogue.show{
+    display:block;
+}
+
+
+#dialogueText{
+    min-height:82px;
+
+    font-size:26px;
+    line-height:1.65;
+}
+
+
+/* ==================================================
+   선택지
+================================================== */
+
+#choices{
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+    margin-top:12px;
+}
+
+
+.choice{
+    width:max-content;
+
+    min-width:280px;
+
+    padding:8px 13px;
+
+    border:0;
+
+    background:transparent;
+
+    color:#25271e;
+
+    font-family:"Galmuri11", sans-serif;
+    font-size:20px;
+
+    text-align:left;
+
+    cursor:pointer;
+}
+
+
+.choice::before{
+    content:"▶ ";
+    opacity:0;
+}
+
+
+.choice:hover{
+    background:#25271e;
+    color:#e2e4b9;
+}
+
+
+.choice:hover::before{
+    opacity:1;
+}
+
+
+/* ==================================================
+   다음 버튼
+================================================== */
+
+#next{
+    position:absolute;
+
+    left:30px;
+    bottom:22px;
+
+    border:0;
+    background:transparent;
+
+    color:#25271e;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+    display:none;
+}
+
+
+/* ==================================================
+   병원 진입창
+================================================== */
+
+#hospitalPrompt{
+    position:absolute;
+
+    width:560px;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    padding:30px;
+
+    border:5px solid #e6dfc8;
+
+    background:#10110f;
+
+    color:#e6dfc8;
+
+    font-size:24px;
+
+    display:none;
+
+    z-index:400;
+}
+
+
+#hospitalPrompt.show{
+    display:block;
+}
+
+
+#hospitalPrompt button{
+    display:block;
+
+    width:100%;
+
+    margin-top:14px;
+
+    padding:11px;
+
+    border:0;
+
+    background:#10110f;
+
+    color:#e6dfc8;
+
+    font-family:"Galmuri11", sans-serif;
+    font-size:20px;
+
+    text-align:left;
+
+    cursor:pointer;
+}
+
+
+#hospitalPrompt button:hover{
+    background:#e6dfc8;
+    color:#10110f;
+}
+
+/* ==================================================
+   처음 인트로
+================================================== */
+
+#intro{
+    position:fixed;
+
+    left:0;
+    top:0;
+
+    width:100%;
+    height:100%;
+
+    background:#0d0d0c;
+
+    color:#eee6cd;
+
+    font-family:"Galmuri11", sans-serif;
+
+    z-index:9999;
+
+    cursor:pointer;
+
+    opacity:1;
+
+    transition:
+        opacity .45s steps(4);
+}
+
+
+#introText{
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    width:80%;
+
+    text-align:center;
+
+    font-size:24px;
+
+    line-height:1.8;
+
+    letter-spacing:-1px;
+}
+
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div id="intro">
+
+    <div id="introText">
+        다은이가 며칠째 학교에 나오지 않는다.
+    </div>
+
+
+</div>
+
+<div id="screen">
+
+
+    <!-- ==================================================
+         WORLD
+    ================================================== -->
+
+    <div id="world">
+
+
+        <!-- 배경 -->
+
+        <img
+            id="map"
+            src="village_day.png"
+            alt=""
+        >
+
+
+        <!-- 병원 클릭 영역 -->
+
+        <button
+            id="hospitalTarget"
+            type="button"
+        >
+
+
+        </button>
+
+
+        <!-- NPC 1 -->
+
+        <button
+            class="npc"
+            id="npc1"
+            data-index="0"
+            type="button"
+        >
+
+            <span class="npcStatus">
+                ...
+            </span>
+
+            <img
+                src="npc1.png"
+                alt=""
+            >
+
+        </button>
+
+
+        <!-- NPC 2 -->
+
+        <button
+            class="npc"
+            id="npc2"
+            data-index="1"
+            type="button"
+        >
+
+            <span class="npcStatus">
+                ...
+            </span>
+
+            <img
+                src="npc2.png"
+                alt=""
+            >
+
+        </button>
+
+
+        <!-- NPC 3 -->
+
+        <button
+            class="npc"
+            id="npc3"
+            data-index="2"
+            type="button"
+        >
+
+            <span class="npcStatus">
+                ...
+            </span>
+
+            <img
+                src="npc3.png"
+                alt=""
+            >
+
+        </button>
+
+
+        <!-- 플레이어 -->
+
+        <img
+            id="player"
+            src="player_front_1.png"
+            alt=""
+        >
+
+
+    </div>
+
+
+    <!-- 안내 -->
+
+    <div id="guide">
+        가까운 친구에게 말을 걸어보자.
+    </div>
+
+
+    <!-- 암전 -->
+
+    <div id="darkOverlay">
+    </div>
+
+
+    <!-- ==================================================
+         대화창
+    ================================================== -->
+
+    <div id="dialogue">
+
+        <div id="dialogueText">
+        </div>
+
+        <div id="choices">
+        </div>
+
+        <button
+            id="next"
+            type="button"
+        >
+            ▼
+        </button>
+
+    </div>
+
+
+    <!--병원-->
+
+    <div id="hospitalPrompt">
+
+        <div>
+            병원에 들어가 볼까?
+        </div>
+
+        <button
+            id="enterHospital"
+            type="button"
+        >
+            ▶ 들어간다
+        </button>
+
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+/* ==================================================
+   처음 인트로
+================================================== */
+/* ==================================================
+   처음 인트로 - 타이핑 효과
+================================================== */
+
+const intro =
+document.getElementById("intro");
+
+const introText =
+document.getElementById("introText");
+
+
+const introLines = [
+
+    "요즘 다은이가 학교에 나오지 않는다.",
+
+    "무슨 일 있나,,.",
+
+    "애들한테 한번 물어봐야겠다."
+
+];
+
+
+let introStep = 0;
+
+let typingIndex = 0;
+
+let typing = false;
+
+let typingTimer = null;
+
+
+/* 타이핑 속도
+   숫자 작을수록 빠름 */
+const typingSpeed = 65;
+
+
+
+/* ==================================================
+   문장 타이핑
+================================================== */
+
+function typeIntro(){
+
+    typing = true;
+
+    typingIndex = 0;
+
+    introText.textContent = "";
+
+
+    clearInterval(
+        typingTimer
+    );
+
+
+    typingTimer =
+    setInterval(
+        function(){
+
+            introText.textContent +=
+            introLines[introStep][typingIndex];
+
+
+            typingIndex++;
+
+
+            /* 문장 끝 */
+
+            if(
+                typingIndex >=
+                introLines[introStep].length
+            ){
+
+                clearInterval(
+                    typingTimer
+                );
+
+
+                typing = false;
+
+            }
+
+        },
+
+        typingSpeed
+    );
+
+}
+
+
+
+/* ==================================================
+   인트로 클릭
+================================================== */
+
+intro.addEventListener(
+    "click",
+
+    function(){
+
+
+        /*
+        아직 타이핑 중일 때 클릭하면
+        현재 문장을 즉시 완성
+        */
+
+        if(typing){
+
+            clearInterval(
+                typingTimer
+            );
+
+
+            introText.textContent =
+            introLines[introStep];
+
+
+            typing = false;
+
+
+            return;
+        }
+
+
+
+        /*
+        다음 문장
+        */
+
+        introStep++;
+
+
+        if(
+            introStep <
+            introLines.length
+        ){
+
+            typeIntro();
+
+            return;
+        }
+
+
+
+        /*
+        마지막 문장까지 끝나면
+        마을 화면으로
+        */
+
+        intro.style.opacity =
+        "0";
+
+
+        intro.style.pointerEvents =
+        "none";
+
+
+        setTimeout(
+            function(){
+
+                intro.style.display =
+                "none";
+
+            },
+
+            450
+        );
+
+    }
+);
+
+
+
+/* ==================================================
+   페이지 시작하자마자 첫 문장 타이핑
+================================================== */
+
+typeIntro();
+
+/*화면 크기*/
+
+const GAME_WIDTH =
+1672;
+
+
+const GAME_HEIGHT =
+941;
+
+
+
+/*요소*/
+
+const screen =
+document.getElementById("screen");
+
+
+const world =
+document.getElementById("world");
+
+
+const map =
+document.getElementById("map");
+
+
+const npcs =
+Array.from(
+    document.querySelectorAll(".npc")
+);
+
+
+const hospitalTarget =
+document.getElementById("hospitalTarget");
+
+
+const dialogue =
+document.getElementById("dialogue");
+
+
+const dialogueText =
+document.getElementById("dialogueText");
+
+
+const choices =
+document.getElementById("choices");
+
+
+const next =
+document.getElementById("next");
+
+
+const guide =
+document.getElementById("guide");
+
+
+const darkOverlay =
+document.getElementById("darkOverlay");
+
+
+const hospitalPrompt =
+document.getElementById("hospitalPrompt");
+
+
+
+/*화면 비율*/
+
+function resizeGame(){
+
+    const scale =
+    Math.min(
+
+        window.innerWidth /
+        GAME_WIDTH,
+
+        window.innerHeight /
+        GAME_HEIGHT
+
+    );
+
+
+    screen.style.transform =
+    `scale(${scale})`;
+
+
+    screen.style.left =
+    (
+        window.innerWidth
+        -
+        GAME_WIDTH * scale
+
+    ) / 2
+    + "px";
+
+
+    screen.style.top =
+    (
+        window.innerHeight
+        -
+        GAME_HEIGHT * scale
+
+    ) / 2
+    + "px";
+
+}
+
+
+window.addEventListener(
+    "resize",
+    resizeGame
+);
+
+
+resizeGame();
+
+
+
+/* ==================================================
+   진행 상황
+================================================== */
+
+let currentNPC =
+0;
+
+
+let dialogueOpen =
+false;
+
+
+let hospitalUnlocked =
+false;
+
+
+let transitionLocked =
+false;
+
+
+
+/* ==================================================
+   NPC 상태 업데이트
+
+   0 = NPC 1
+   1 = NPC 2
+   2 = NPC 3
+================================================== */
+
+function updateNPCState(){
+
+    npcs.forEach(
+        function(npc,index){
+
+
+            npc.classList.remove(
+                "active"
+            );
+
+
+            const status =
+            npc.querySelector(
+                ".npcStatus"
+            );
+
+
+            /* 이미 만난 사람 */
+
+            if(
+                index <
+                currentNPC
+            ){
+
+                npc.classList.add(
+                    "done"
+                );
+
+
+                status.textContent =
+                "✓";
+
+            }
+
+
+            /* 아직 안 만난 사람 */
+
+            else{
+
+                npc.classList.remove(
+                    "done"
+                );
+
+
+                status.textContent =
+                "...";
+
+            }
+
+
+            /* 지금 만나야 하는 사람 */
+
+            if(
+                index === currentNPC
+                &&
+                currentNPC < 3
+            ){
+
+                npc.classList.add(
+                    "active"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+updateNPCState();
+
+
+
+/* ==================================================
+   CAMERA
+================================================== */
+
+function zoomTo(
+    x,
+    y,
+    zoom
+){
+
+    let moveX =
+    GAME_WIDTH / 2
+    -
+    x * zoom;
+
+
+    let moveY =
+    GAME_HEIGHT * .42
+    -
+    y * zoom;
+
+
+
+    const minX =
+    GAME_WIDTH -
+    GAME_WIDTH * zoom;
+
+
+    const minY =
+    GAME_HEIGHT -
+    GAME_HEIGHT * zoom;
+
+
+
+    moveX =
+    Math.min(
+        0,
+        Math.max(
+            minX,
+            moveX
+        )
+    );
+
+
+    moveY =
+    Math.min(
+        0,
+        Math.max(
+            minY,
+            moveY
+        )
+    );
+
+
+    world.style.transform =
+
+    `matrix(
+        ${zoom},
+        0,
+        0,
+        ${zoom},
+        ${moveX},
+        ${moveY}
+    )`;
+
+}
+
+
+
+/* ==================================================
+   전체 지도
+================================================== */
+
+function zoomOut(){
+
+    world.style.transform =
+    "matrix(1,0,0,1,0,0)";
+
+
+    if(
+        !hospitalUnlocked
+    ){
+
+        guide.textContent =
+        "다른 친구들한테도 물어보자.";
+
+    }
+
+}
+
+
+
+/*NPC위치*/
+
+const npcPositions = [
+
+    {
+        x:710,
+        y:740
+    },
+
+    {
+        x:1030,
+        y:570
+    },
+
+    {
+        x:900,
+        y:370
+    }
+
+];
+
+/*대화*/
+
+const conversations = [
+
+
+/* NPC 1 */
+
+{
+    start:
+    "너 다은이 얘기 들었어?",
+
+
+    choices:[
+
+        {
+            text:
+            "응",
+
+            response:
+            "너도 들었구나. 우울증 때문에 요즘 학교를 쉰대."
+        },
+
+
+        {
+            text:
+            "아니.",
+
+            response:
+            "너 모르는구나, 우울증 때문에 요즘 학교를 못 나온대."
+        }
+
+    ],
+
+
+    after:
+    "근데 학교까지 못 나올 정도인가? 난 잘 모르겠네."
+
+},
+
+
+
+/*NPC 2*/
+
+{
+    start:
+    "다은이가 지하철에서 갑자기 쓰러졌다던데, 들었어?",
+
+
+    choices:[
+
+        {
+            text:
+            "들었어.",
+
+            response:
+            "공황장애 때문이래."
+        },
+
+
+        {
+            text:
+            "처음 듣는데.",
+
+            response:
+            "지하철에서 갑자기 숨을 못 쉬어서 그랬대. 공황장애라나 봐."
+        }
+
+    ],
+
+
+    after:
+    "근데 다은이가 평소에도 좀 예민했잖아."
+
+},
+
+
+
+/*NPC 3*/
+
+{
+    start:
+    "너 계속 다은이 얘기 물어보고 다니네.",
+
+
+    choices:[
+
+        {
+            text:
+            "좀 걱정돼서.",
+
+            response:
+            "생각보다 많이 신경 쓰이나 보네."
+        },
+
+
+        {
+            text:
+            "그냥 궁금해서.",
+
+            response:
+            "그래도 계속 물어보는 걸 보면 신경 쓰이는 것 같은데."
+        }
+
+    ],
+
+
+    after:
+    "정 걱정되면 네가 병원 한 번 가봐."
+
+}
+
+];
+
+
+
+/*NPC*/
+
+npcs.forEach(
+    function(npc,index){
+
+
+        npc.addEventListener(
+            "click",
+
+            function(event){
+
+
+                event.stopPropagation();
+
+
+                if(
+                    dialogueOpen
+                    ||
+                    transitionLocked
+                ){
+                    return;
+                }
+
+
+                /*
+                현재 순서의 NPC만 가능
+                */
+
+                if(
+                    index !==
+                    currentNPC
+                ){
+                    return;
+                }
+
+
+
+                transitionLocked =
+                true;
+
+
+
+                const position =
+                npcPositions[index];
+
+
+
+                zoomTo(
+                    position.x,
+                    position.y,
+                    2.3
+                );
+
+
+                guide.textContent =
+                "...Loding...";
+
+
+
+                /*
+                더블 클릭 필요 없음
+                첫 클릭에서 자동 대화
+                */
+
+                setTimeout(
+                    function(){
+
+
+                        transitionLocked =
+                        false;
+
+
+                        startDialogue();
+
+
+                    },
+                    650
+                );
+
+            }
+        );
+
+    }
+);
+
+
+
+/* ==================================================
+   대화 시작
+================================================== */
+
+function startDialogue(){
+
+    if(
+        dialogueOpen
+    ){
+        return;
+    }
+
+
+    dialogueOpen =
+    true;
+
+
+
+    const conversation =
+    conversations[
+        currentNPC
+    ];
+
+
+
+    dialogue.classList.add(
+        "show"
+    );
+
+
+    dialogueText.textContent =
+    conversation.start;
+
+
+    showChoices(
+        conversation
+    );
+
+}
+
+
+
+/* ==================================================
+   선택지
+================================================== */
+
+function showChoices(
+    conversation
+){
+
+    choices.innerHTML =
+    "";
+
+
+    next.style.display =
+    "none";
+
+
+
+    conversation
+    .choices
+    .forEach(
+
+        function(data){
+
+
+            const button =
+            document.createElement(
+                "button"
+            );
+
+
+            button.type =
+            "button";
+
+
+            button.className =
+            "choice";
+
+
+            button.textContent =
+            data.text;
+
+
+
+            button.addEventListener(
+                "click",
+
+                function(event){
+
+
+                    event.stopPropagation();
+
+
+                    choices.innerHTML =
+                    "";
+
+
+                    dialogueText.textContent =
+                    data.response;
+
+
+                    next.style.display =
+                    "block";
+
+
+                    next.onclick =
+                    function(event){
+
+
+                        event.stopPropagation();
+
+
+                        showFinalLine(
+                            conversation
+                        );
+
+                    };
+
+                }
+            );
+
+
+
+            choices.appendChild(
+                button
+            );
+
+        }
+    );
+
+}
+
+
+
+/* ==================================================
+   NPC의 마지막 편견 대사
+================================================== */
+
+function showFinalLine(
+    conversation
+){
+
+    dialogueText.textContent =
+    conversation.after;
+
+
+    next.onclick =
+    function(event){
+
+
+        event.stopPropagation();
+
+
+        endDialogue();
+
+    };
+
+}
+
+
+
+/* ==================================================
+   대화 종료
+================================================== */
+
+function endDialogue(){
+
+    dialogue.classList.remove(
+        "show"
+    );
+
+
+    next.style.display =
+    "none";
+
+
+    choices.innerHTML =
+    "";
+
+
+    dialogueOpen =
+    false;
+
+
+    currentNPC++;
+
+
+    updateNPCState();
+
+
+
+    /*
+    NPC 3명 완료
+    */
+
+    if(
+        currentNPC >= 3
+    ){
+
+        unlockHospital();
+
+        return;
+
+    }
+
+
+
+    /*
+    다시 전체 맵
+    */
+
+    zoomOut();
+
+}
+
+
+
+/* ==================================================
+   병원 활성화
+
+   NPC 3명 완료 후 실행
+================================================== */
+
+function unlockHospital(){
+
+    hospitalUnlocked =
+    true;
+
+
+    transitionLocked =
+    true;
+
+
+
+    /*
+    먼저 전체 지도
+    */
+
+    zoomOut();
+
+
+    guide.textContent =
+    "...Loding...";
+
+
+
+    /*
+    잠깐 있다가 암전
+    */
+
+    setTimeout(
+        function(){
+
+            darkOverlay.style.opacity =
+            ".82";
+
+        },
+        250
+    );
+
+
+
+    /*
+    밤 배경으로 교체
+    */
+
+    setTimeout(
+        function(){
+
+
+            map.src =
+            "village_night.png";
+
+
+            hospitalTarget
+            .classList
+            .add(
+                "unlocked"
+            );
+
+
+            darkOverlay.style.opacity =
+            "0";
+
+
+            guide.textContent =
+            "병원에 가보자.";
+
+
+            transitionLocked =
+            false;
+
+
+        },
+        800
+    );
+
+}
+
+
+
+/* ==================================================
+   병원 클릭
+================================================== */
+
+hospitalTarget.addEventListener(
+    "click",
+
+    function(event){
+
+
+        event.stopPropagation();
+
+
+        if(
+            !hospitalUnlocked
+            ||
+            transitionLocked
+        ){
+            return;
+        }
+
+
+
+        transitionLocked =
+        true;
+
+
+
+        /*
+        병원 확대
+        */
+
+        zoomTo(
+            836,
+            190,
+            2.3
+        );
+
+
+        guide.textContent =
+        "...Loding...";
+
+
+
+        setTimeout(
+            function(){
+
+
+                hospitalPrompt
+                .classList
+                .add(
+                    "show"
+                );
+
+
+                transitionLocked =
+                false;
+
+
+            },
+            650
+        );
+
+    }
+);
+
+
+
+/* ==================================================
+   병원 들어가기
+
+   중요:
+   index = 지금 인트로
+   home = 병원 메인
+================================================== */
+
+document
+.getElementById(
+    "enterHospital"
+)
+.addEventListener(
+    "click",
+
+    function(event){
+
+
+        event.stopPropagation();
+
+
+        window.location.href =
+        "home.html";
+
+    }
+);
+
+
+
+/* ==================================================
+   병원 안 들어가기
+================================================== */
+
+
+
+</script>
+
+</body>
+
+</html>

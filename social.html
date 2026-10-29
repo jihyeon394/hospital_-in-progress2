@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>정병아카이브</title>
+
+<style>
+
+@import url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css');
+
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
+    margin:0;
+    width:100%;
+    height:100%;
+
+    background:#000;
+
+    overflow:hidden;
+}
+
+
+/* 전체 고정 화면 */
+
+#stage{
+    position:absolute;
+
+    width:1672px;
+    height:941px;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%, -50%);
+
+    overflow:hidden;
+
+    background:#000;
+}
+
+
+/* 사회불안장애 */
+
+#socialScene{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:1672px;
+    height:941px;
+
+    background:#000;
+
+    overflow:hidden;
+
+    cursor:none;
+
+    z-index:100;
+}
+
+
+/* 눈 */
+
+.eye{
+    position:absolute;
+
+    pointer-events:none;
+
+    transform-origin:center center;
+
+    z-index:10;
+}
+
+
+/* 흰자 */
+
+.eye-base{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:100%;
+    height:100%;
+
+    object-fit:contain;
+
+    image-rendering:pixelated;
+}
+
+
+/* 동공 영역 */
+
+.pupil-area{
+    position:absolute;
+
+    left:19%;
+    top:15%;
+
+    width:62%;
+    height:68%;
+}
+
+
+/* 동공 */
+
+.pupil{
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    width:42%;
+
+    transform:translate(-50%, -50%);
+
+    image-rendering:pixelated;
+}
+
+
+/* 커서 */
+
+#socialCursor{
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:72px;
+
+    pointer-events:none;
+
+    z-index:9999;
+
+    image-rendering:pixelated;
+
+    filter:brightness(0) invert(1);
+}
+
+
+/* BACK */
+
+#socialBack{
+    position:absolute;
+
+    left:9%;
+    top:9%;
+
+    padding:10px 16px;
+
+    border:1px solid #eee9df;
+
+    background:#000;
+
+    color:#eee9df;
+
+    font-family:monospace;
+    font-size:16px;
+
+    cursor:pointer;
+
+    z-index:1000;
+}
+
+
+#socialBack:hover{
+    background:#eee9df;
+    color:#000;
+}
+
+/* 사회불안 설명창 뒤 어둡게 */
+
+#infoOverlay{
+    position:fixed;
+
+    left:0;
+    top:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,.62);
+
+    z-index:800;
+
+    display:none;
+}
+
+
+/* 사회불안 설명창 */
+
+#infoBox{
+    position:fixed;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%, -50%);
+
+    width:620px;
+
+    padding:34px 38px;
+
+    background:#e2e4b9;
+    color:#25271e;
+
+    border:7px solid #303229;
+
+    font-family:"Galmuri11", sans-serif;
+
+    z-index:900;
+
+    display:none;
+}
+
+
+#infoBox.show{
+    display:block;
+}
+
+
+#infoOverlay.show{
+    display:block;
+}
+
+
+#infoTitle{
+    font-size:27px;
+
+    margin-bottom:22px;
+}
+
+
+#infoText{
+    font-size:19px;
+
+    line-height:1.8;
+}
+
+
+#infoButton{
+    margin-top:28px;
+
+    padding:8px 12px;
+
+    border:0;
+
+    background:transparent;
+
+    color:#25271e;
+
+    font-family:"Galmuri11", sans-serif;
+
+    font-size:19px;
+
+    cursor:pointer;
+}
+
+
+#infoButton::before{
+    content:"▶ ";
+}
+
+
+#infoButton:hover{
+    background:#25271e;
+    color:#e2e4b9;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<main id="stage">
+
+
+<section id="socialScene">
+
+
+    <button
+        id="socialBack"
+        type="button"
+    >
+        ← BACK
+    </button>
+
+
+    <img
+        id="socialCursor"
+        src="cursor.png"
+        alt=""
+    >
+
+
+</section>
+
+
+</main>
+
+
+<div id="infoOverlay"></div>
+
+
+<div id="infoBox">
+
+    <div id="infoTitle">
+        사회불안장애
+    </div>
+
+    <div id="infoText">
+
+    다른 사람의 시선이나 평가를 강하게 두려워하여,
+        일상적인 사회적 상황에서도 큰 불안을 느끼는 상태
+
+    </div>
+
+
+    <button
+        id="infoButton"
+        type="button"
+    >
+        돌아가기
+    </button>
+
+</div>
+
+</body>
+<script>
+
+
+const socialScene =
+document.getElementById(
+    "socialScene"
+);
+
+
+const socialCursor =
+document.getElementById(
+    "socialCursor"
+);
+
+
+const socialBack =
+document.getElementById(
+    "socialBack"
+);
+
+
+
+/* 만들어진 눈 */
+
+let eyes = [];
+
+
+/* 이전 마우스 위치 */
+
+let lastX = null;
+let lastY = null;
+
+
+/* 이동 거리 누적 */
+
+let movement = 0;
+
+
+/* 눈 생성 속도 */
+
+const EYE_SCALE = 1.4;
+
+const SPAWN_DISTANCE =
+110;
+
+
+/* 최대 눈 개수 */
+
+const MAX_EYES =
+100;
+
+
+
+/* ==================================================
+   초기화
+================================================== */
+
+function resetSocialScene(){
+
+
+    eyes.forEach(function(data){
+
+        data.element.remove();
+
+    });
+
+
+    eyes = [];
+
+
+    lastX = null;
+    lastY = null;
+
+    movement = 0;
+
+
+
+    /* 처음 눈 5개 */
+
+
+    createEye(
+        720,
+        25,
+        240,
+        0
+    );
+
+
+    createEye(
+        -40,
+        20,
+        270,
+        10
+    );
+
+
+    createEye(
+        1470,
+        420,
+        220,
+        -8
+    );
+
+
+    createEye(
+        -40,
+        680,
+        300,
+        -10
+    );
+
+
+    createEye(
+        1120,
+        660,
+        170,
+        14
+    );
+
+}
+
+
+
+/* ==================================================
+   눈 생성
+================================================== */
+
+function createEye(
+    x,
+    y,
+    size,
+    rotation
+){
+
+    if(
+        eyes.length >=
+        MAX_EYES
+    ){
+        return;
+    }
+
+
+    const eye =
+    document.createElement(
+        "div"
+    );
+
+
+    eye.className =
+    "eye";
+
+
+    eye.style.left =
+    x + "px";
+
+
+    eye.style.top =
+    y + "px";
+
+
+eye.style.width =
+size * EYE_SCALE + "px";
+
+
+eye.style.height =
+size * EYE_SCALE * 0.58 + "px";
+
+    eye.style.transform =
+    `rotate(${rotation}deg)`;
+
+
+
+    /* 흰자 */
+
+    const base =
+    document.createElement(
+        "img"
+    );
+
+
+    base.src =
+    "eye.png";
+
+
+    base.className =
+    "eye-base";
+
+
+
+    /* 동공 영역 */
+
+    const area =
+    document.createElement(
+        "div"
+    );
+
+
+    area.className =
+    "pupil-area";
+
+
+
+    /* 동공 */
+
+    const pupil =
+    document.createElement(
+        "img"
+    );
+
+
+    pupil.src =
+    "pupil.png";
+
+
+    pupil.className =
+    "pupil";
+
+
+
+    area.appendChild(
+        pupil
+    );
+
+
+    eye.appendChild(
+        base
+    );
+
+
+    eye.appendChild(
+        area
+    );
+
+
+    socialScene.appendChild(
+        eye
+    );
+
+
+    eyes.push({
+
+        element:eye,
+
+        pupil:pupil,
+
+        rotation:rotation
+
+    });
+
+}
+
+
+
+/* ==================================================
+   랜덤 눈 생성
+================================================== */
+
+function spawnEye(){
+
+    if(
+        eyes.length >=
+        MAX_EYES
+    ){
+        return;
+    }
+
+
+    const sizes = [
+
+        70,
+        90,
+        120,
+        150,
+        190,
+        240
+
+    ];
+
+
+    const size =
+    sizes[
+        Math.floor(
+            Math.random()
+            *
+            sizes.length
+        )
+    ];
+
+
+    let x =
+    Math.random()
+    *
+    (1672 - size);
+
+
+    let y =
+    Math.random()
+    *
+    (941 - size * .6);
+
+
+
+    if(
+        x < 500
+        &&
+        y < 120
+    ){
+
+        y += 150;
+
+    }
+
+
+
+    const rotations = [
+
+        -15,
+        -8,
+        0,
+        8,
+        15
+
+    ];
+
+
+    const rotation =
+    rotations[
+        Math.floor(
+            Math.random()
+            *
+            rotations.length
+        )
+    ];
+
+
+    createEye(
+        x,
+        y,
+        size,
+        rotation
+    );
+
+}
+
+
+
+/* ==================================================
+   모든 눈동자가 커서 따라가기
+================================================== */
+
+function updateEyes(
+    cursorX,
+    cursorY
+){
+
+    eyes.forEach(function(data){
+
+
+        const rect =
+        data.element
+        .getBoundingClientRect();
+
+
+        const centerX =
+        rect.left
+        +
+        rect.width / 2;
+
+
+        const centerY =
+        rect.top
+        +
+        rect.height / 2;
+
+
+        let dx =
+        cursorX -
+        centerX;
+
+
+        let dy =
+        cursorY -
+        centerY;
+
+
+
+        const radians =
+        -data.rotation
+        *
+        Math.PI
+        /
+        180;
+
+
+        const localX =
+        dx * Math.cos(radians)
+        -
+        dy * Math.sin(radians);
+
+
+        const localY =
+        dx * Math.sin(radians)
+        +
+        dy * Math.cos(radians);
+
+
+        const angle =
+        Math.atan2(
+            localY,
+            localX
+        );
+
+
+
+        const maxX =
+        rect.width
+        * .13;
+
+
+        const maxY =
+        rect.height
+        * .14;
+
+
+        const pupilX =
+        Math.cos(angle)
+        *
+        maxX;
+
+
+        const pupilY =
+        Math.sin(angle)
+        *
+        maxY;
+
+
+        data.pupil.style.transform =
+
+        `
+        translate(
+            calc(-50% + ${pupilX}px),
+            calc(-50% + ${pupilY}px)
+        )
+        `;
+
+
+    });
+
+}
+
+
+
+/* ==================================================
+   마우스 움직임
+================================================== */
+
+socialScene.addEventListener(
+    "mousemove",
+
+    function(event){
+
+
+        const rect =
+        socialScene
+        .getBoundingClientRect();
+
+
+        const mouseX =
+        event.clientX -
+        rect.left;
+
+
+        const mouseY =
+        event.clientY -
+        rect.top;
+
+
+
+        /* 커서 이동 */
+
+        socialCursor.style.left =
+        mouseX + "px";
+
+
+        socialCursor.style.top =
+        mouseY + "px";
+
+
+
+        /* 모든 눈 추적 */
+
+        updateEyes(
+            event.clientX,
+            event.clientY
+        );
+
+
+
+        /* 움직인 거리 계산 */
+
+        if(
+            lastX !== null
+        ){
+
+
+            const dx =
+            mouseX -
+            lastX;
+
+
+            const dy =
+            mouseY -
+            lastY;
+
+
+            const distance =
+            Math.sqrt(
+                dx * dx
+                +
+                dy * dy
+            );
+
+
+            movement +=
+            distance;
+
+
+
+            /* 일정 거리 움직일 때마다 새 눈 */
+
+            if(
+                movement >=
+                SPAWN_DISTANCE
+            ){
+
+                spawnEye();
+
+
+                movement =
+                0;
+
+            }
+
+        }
+
+
+        lastX =
+        mouseX;
+
+
+        lastY =
+        mouseY;
+
+
+    }
+);
+
+
+
+/* ==================================================
+   BACK → 병원
+================================================== */
+
+socialBack.addEventListener(
+    "click",
+
+    function(){
+
+        window.location.href =
+        "home.html";
+
+    }
+);
+
+
+
+/* 시작 */
+
+resetSocialScene();
+/* =========================================
+   눈이 많아지면 사회불안 설명창 표시
+========================================= */
+
+const infoBox =
+document.getElementById("infoBox");
+
+const infoOverlay =
+document.getElementById("infoOverlay");
+
+const infoButton =
+document.getElementById("infoButton");
+
+
+let infoShown =
+false;
+
+
+/*
+현재 화면의 눈 이미지 개수 확인
+
+파일명이나 class에
+eye가 들어간 이미지들을 자동으로 셈
+*/
+
+function getEyeCount(){
+
+    const images =
+    document.querySelectorAll("img");
+
+
+    let count = 0;
+
+
+    images.forEach(
+        function(image){
+
+            const checkText =
+            (
+                image.className +
+                " " +
+                image.id +
+                " " +
+                image.src
+            )
+            .toLowerCase();
+
+
+            if(
+                checkText.includes("eye")
+            ){
+
+                count++;
+
+            }
+
+        }
+    );
+
+
+    return count;
+
+}
+
+
+
+/* 설명창 열기 */
+
+function showSocialInfo(){
+
+    if(infoShown){
+        return;
+    }
+
+
+    infoShown =
+    true;
+
+
+    infoOverlay.classList.add(
+        "show"
+    );
+
+
+    infoBox.classList.add(
+        "show"
+    );
+
+}
+
+
+
+/*
+화면 안에 새로운 눈이 추가되는지 계속 감시
+*/
+
+const eyeObserver =
+new MutationObserver(
+    function(){
+
+        const eyeCount =
+        getEyeCount();
+
+
+        /*
+        눈이 22개 이상이면 설명창
+        */
+
+        if(
+            eyeCount >= 90
+        ){
+
+            setTimeout(
+                function(){
+
+                    showSocialInfo();
+
+                },
+                700
+            );
+
+
+            eyeObserver.disconnect();
+
+        }
+
+    }
+);
+
+
+
+eyeObserver.observe(
+    document.body,
+    {
+        childList:true,
+        subtree:true
+    }
+);
+
+
+
+/* 돌아가기 */
+
+infoButton.addEventListener(
+    "click",
+
+    function(){
+
+        window.location.href =
+        "home.html";
+
+    }
+);
+
+</script>
+
+</html>
